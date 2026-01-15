@@ -45,7 +45,6 @@ def load_victories(filename="victories.xml"):
         return {}
 
 
-# Cargamos las reglas globalmente para sustituir el diccionario Victories anterior
 RULES = load_victories()
 
 NUMBER_RECENT_ACTIONS = 5
@@ -56,12 +55,9 @@ def assess_game(user_action, computer_action):
         print(f"User and computer picked {user_action.name}. Draw game!")
         return GameResult.Tie
 
-    # Sustitución de la lógica manual por consulta al diccionario de reglas XML
-    # Si la elección del usuario tiene a la de la PC como víctima:
     if computer_action in RULES.get(user_action, {}):
         print(f"{RULES[user_action][computer_action]}. You won!")
         return GameResult.Victory
-    # De lo contrario, la PC gana (siempre que no sea empate)
     else:
         print(f"{RULES[computer_action][user_action]}. You lost!")
         return GameResult.Defeat
@@ -71,7 +67,7 @@ def get_computer_action(user_actions_history, game_history):
     if not user_actions_history or not game_history:
         computer_action = get_random_computer_action()
     else:
-        # Predicción: buscar qué ganaría contra la acción más frecuente del usuario
+
         most_frequent_user_action = GameAction(mode(user_actions_history[-NUMBER_RECENT_ACTIONS:]))
         computer_action = get_winner_action(most_frequent_user_action)
 
@@ -80,7 +76,6 @@ def get_computer_action(user_actions_history, game_history):
 
 
 def get_user_action():
-    # Ahora muestra automáticamente Rock[0], Paper[1], Scissors[2], Lizard[3], Spock[4]
     game_choices = [f"{ga.name}[{ga.value}]" for ga in GameAction]
     game_choices_str = ", ".join(game_choices)
     user_selection = int(input(f"\nPick a choice ({game_choices_str}): "))
@@ -93,9 +88,7 @@ def get_random_computer_action():
 
 
 def get_winner_action(user_action):
-    """
-    Busca qué acciones pueden ganar a la acción del usuario basándose en las reglas XML.
-    """
+
     possible_winners = [winner for winner, victims in RULES.items() if user_action in victims]
     return random.choice(possible_winners) if possible_winners else get_random_computer_action()
 
